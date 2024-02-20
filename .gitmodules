@@ -1,0 +1,3 @@
+[submodule "BioinformaticsAlgorithmsPython"]
+	path = BioinformaticsAlgorithms/bioinformatics
+	url = https://github.com/weka511/bioinformatics.git
