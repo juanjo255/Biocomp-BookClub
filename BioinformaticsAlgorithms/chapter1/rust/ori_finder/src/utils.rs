@@ -1,4 +1,4 @@
-use std::{cmp::min, num::ParseFloatError};
+use std::cmp::min;
 
 pub fn pattern_count(text: &str, pattern: &str) -> (u64, Vec<u64>) {
     // Count how many time a given patter appears in text and positions in text
@@ -67,7 +67,6 @@ pub fn frequent_words(text: String, k: u8, l: u8, t: u64) {
 
         // Traverse each window in genome
         for j in 0..=(window_in_genome.len() - k as usize) {
-          
             let forward = (&text[j..j + (k as usize)]).to_string();
             let reverse = reverse_complement(&text[j..j + (k as usize)]);
 
@@ -76,8 +75,8 @@ pub fn frequent_words(text: String, k: u8, l: u8, t: u64) {
 
             // Count instances of pattern
             let count_pos = pattern_count(&text, &pattern);
-
-            count.push(count_pos.clone());
+             
+            count.push(count_pos.clone());            
 
             // Check if pattern forms a clump and if it's not already in the group
             if (count_pos.0 >= t)
@@ -95,13 +94,11 @@ pub fn frequent_words(text: String, k: u8, l: u8, t: u64) {
     let max_num = count.iter().map(|x| x.0).max().unwrap().to_owned();
     println!("max_num: {max_num}");
     for i in 0..=(text.len() - k as usize) {
-        if count[i].0 == max_num
-            && !(frequent_pattern
-                .iter()
-                .map(|x| x.0)
-                .collect::<Vec<&str>>()
-                .contains(&&text[i..i + (k as usize)]))
-        {
+        if count[i].0 == max_num && !(frequent_pattern
+          .iter()
+          .map(|x| x.0)
+          .collect::<Vec<&str>>()
+          .contains(&&text[i..i + (k as usize)]))  {
             frequent_pattern.push((&text[i..i + (k as usize)], count[i].1.clone()));
         }
     }
