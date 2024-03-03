@@ -146,7 +146,7 @@ pub fn hamming_distance(pattern: &str, pattern2: &str) -> i32 {
 
 // Problem 1H
 // Find all approximate occurrences of a pattern in a string.
-pub fn approx_pattern_match(pattern: &str, text: String, d: i32) -> (u64, Vec<u64>) {
+pub fn approx_pattern_match(text: &str, pattern: &str, d: i32) -> (u64, Vec<u64>) {
     // Counter for each time an instance of "pattern" is found
     let mut count: u64 = 0;
 
@@ -169,6 +169,106 @@ pub fn approx_pattern_match(pattern: &str, text: String, d: i32) -> (u64, Vec<u6
             pattern_pos.push(i as u64);
         }
     }
-    println!("Instances found: {count}");
+    //println!("Instances found: {count}");
     return (count, pattern_pos)
+}
+
+// Problem 1I and 1J
+// Find the most frequent k-mers (with mismatches and reverse complements) in a string.
+
+// Compute an Index for a pattern (hash strategy)
+pub fn nucl_to_number(nucl:&str) -> u64{
+    let mut score: u64 = 0;
+    for base in nucl.chars(){
+        match base{
+            'A' => score += 0,
+            'C' => score += 1,
+            'G' => score += 2,
+            'T'=> score += 3,
+            _ => panic!("Non cannonical base found! {base}")
+        }
+    }
+    return score
+}
+
+pub fn pattern_to_number(pattern:&str) -> u64{
+    if pattern.is_empty(){
+        return 0
+    }
+    let suffix = &pattern[pattern.len()-1..pattern.len()];
+    let prefix = &pattern[..pattern.len()-1];
+    //println!("prefix: {prefix}, suffix: {suffix}");
+    return 4 * pattern_to_number(prefix) + nucl_to_number(&suffix);
+}
+
+// Inverse from above: Compute a pattern from an Index
+pub fn number_to_nucl(number:u8) -> String{
+    let nucl:String;
+    match number{
+            0 => nucl= String::from("A"),
+            1 => nucl= String::from("C"),
+            2 => nucl= String::from("G"),
+            3 => nucl= String::from("T"),
+            _ => panic!("Non cannonical number found! {number}")
+        }
+    return nucl
+}
+
+pub fn number_to_pattern(index:u64, k:u32){
+    let mut counter = k;
+    let mut index_copy = index.clone();
+    let mut remainder:u8;
+    let mut quotient:u64;
+    let mut pattern:String= String::from("");
+    while counter > 0 {
+        remainder = (index_copy % 4) as u8;
+        pattern = number_to_nucl(remainder) + &pattern;
+        quotient = index_copy / 4;
+        index_copy = quotient;
+        counter-= 1;
+    }
+    println!("{pattern}");
+
+    todo!()
+}
+
+pub fn frequent_pattern_mismatches (text: String, k: u8, d:i32){
+
+    // Remove whitespaces
+    let mut text = text.to_ascii_uppercase();
+    text.retain(|x| !x.is_whitespace());
+
+    // Store every k-mer found in text
+    let mut frequent_pattern: Vec<(&str, Vec<u64>)> = Vec::new();
+
+    // Store the counts for each kmer
+    let mut count: Vec<(u64, Vec<u64>)> = Vec::new();
+
+    // Traverse the genome in windows of l length
+    for i in 0..=(text.len() - k as usize) {
+            
+        // Take the minimun between forward and reverse to avoid redundancy
+        let pattern = (&text[i..i + (k as usize)]).to_string();
+
+        // Count instances of pattern
+        let count_pos = approx_pattern_match(&text, &pattern, d);
+        count.push(count_pos.clone());
+
+    }
+
+    let max_num = count.iter().map(|x| x.0).max().unwrap().to_owned();
+    println!("max_num: {max_num}");
+    for i in 0..=(text.len() - k as usize) {
+        if count[i].0 == max_num
+            && !(frequent_pattern
+                .iter()
+                .map(|x| x.0)
+                .collect::<Vec<&str>>()
+                .contains(&min(&&text[i..i + (k as usize)], &reverse_complement(&text[i..i + (k as usize)]) )))
+        {
+            frequent_pattern.push((&text[i..i + (k as usize)], count[i].1.clone()));
+        }
+    }
+
+    println!("Frequent patterns {:?}", frequent_pattern);
 }

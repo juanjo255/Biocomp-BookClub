@@ -8,5 +8,7 @@ fn main() {
     // )
     //utils::find_clumps("atcaatgatcaacgtaagcttctaagcatg", "atc", 4, 3)
     //utils::minimum_skew(String::from("CATGGGCATCGGCCATACGCC"));
-    utils::approx_pattern_match("AAAAA",String::from("AACAAGCATAAACATTAAAGAG"), 1);
+    //utils::frequent_pattern_mismatches(String::from("AACAAGCATAAACATTAAAGAG"), 4, 0);
+    utils::number_to_pattern(utils::pattern_to_number("ATA"), 3)
+
 }
