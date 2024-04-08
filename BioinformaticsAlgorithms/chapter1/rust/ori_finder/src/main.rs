@@ -10,5 +10,4 @@ fn main() {
     //utils::minimum_skew(String::from("CATGGGCATCGGCCATACGCC"));
     //utils::frequent_pattern_mismatches(String::from("AACAAGCATAAACATTAAAGAG"), 4, 0);
     utils::number_to_pattern(utils::pattern_to_number("ATA"), 3)
-
 }
